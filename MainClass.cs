@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -34,6 +35,11 @@ namespace trayer
             var optStartup = (ToolStripMenuItem)Menu1.Items.Add("Startup");
             var optExit = (ToolStripMenuItem)Menu1.Items.Add("Exit");
             optStartup.Checked = ToggleStartup(true, true);
+            optExit.Click += (s, e) => {
+                foreach (var h in Handles.Keys)
+                    Native32.ShowActiveWindow(h, true);
+                Application.Exit();
+            };
             optStartup.Click += (s, e) => {
                 optStartup.Checked = !optStartup.Checked;
                 ToggleStartup(optStartup.Checked);
@@ -46,19 +52,22 @@ namespace trayer
                 if (wHandle == Handle) return;
                 var wInfo = Native32.GetActiveWindowInfo(wHandle, true);
                 var wProc = wInfo[2] as Process;
-                if ("explorer" == wProc.ProcessName && "Program Manager" == ""+wInfo[1])
+                var wText = "" + wInfo[1];
+                var wIcon = wInfo[0] as Icon;
+                if ("explorer" == wProc.ProcessName && "Program Manager" == wText)
+                    return;
+                if ("explorer" == wProc.ProcessName && "" == wText.Trim())
                     return;
                 if (Control.MouseButtons != MouseButtons.Middle)
                     return;
                 if (Handles.ContainsKey(wHandle))
                     return;
                 Handles.Add(wHandle, wInfo);
-                var wText = "" + wInfo[1];
-                var wIcon = wInfo[0] as Icon;
                 string wTitle = wText;
                 if (wText.Length > 16) wTitle = wTitle.Substring(0, 16) + "…"; 
                 var optSubWindow = (ToolStripMenuItem)optWindow.DropDownItems.Add(wTitle);
-                try { optSubWindow.Image = wIcon.ToBitmap(); } catch { }
+                if (null != wIcon)
+                    try { optSubWindow.Image = wIcon.ToBitmap(); } catch { }
                 optSubWindow.Click += (s2, e2) => {
                     Handles.Remove(wHandle);
                     Native32.ShowActiveWindow(wHandle, true);
