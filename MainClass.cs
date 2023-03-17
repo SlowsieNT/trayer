@@ -60,6 +60,8 @@ namespace trayer
                     return;
                 if ("explorer" == wProc.ProcessName && "" == wText.Trim())
                     return;
+                if ("" == wText.Trim() && null == wIcon)
+                    return;
                 if (Control.MouseButtons != MouseButtons.Middle)
                     return;
                 if (!vbk.CtrlKeyDown)
