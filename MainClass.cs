@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace trayer
         IntPtr Handle = IntPtr.Zero;
         public MainClass(string[] args)
         {
+            var vbk = new Keyboard();
             Handle = Process.GetCurrentProcess().Handle;
             appName = Application.ProductName;
             // Show tray icon
@@ -59,6 +61,8 @@ namespace trayer
                 if ("explorer" == wProc.ProcessName && "" == wText.Trim())
                     return;
                 if (Control.MouseButtons != MouseButtons.Middle)
+                    return;
+                if (!vbk.CtrlKeyDown)
                     return;
                 if (Handles.ContainsKey(wHandle))
                     return;
