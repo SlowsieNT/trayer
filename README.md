@@ -1,3 +1,4 @@
+## This is free and unencumbered software released into the public domain.
 # App Trayer
 Simply tray apps by `{Ctrl}`+`{MClick}` aka mouse middle click and Ctrl on a window.
 <br>
