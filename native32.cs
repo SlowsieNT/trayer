@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -30,6 +30,8 @@ namespace trayer
 
         [DllImport("user32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
         public static extern short GetAsyncKeyState(int vKey);
+        [DllImport("user32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        public static extern short GetKeyState(int vKey);
         public static IntPtr GetActiveWindow() { return GetForegroundWindow(); }
         public static string GetActiveWindowTitle() => GetActiveWindowTitle(IntPtr.Zero);
         public static Process GetActiveWindowProcess(IntPtr hWnd)
@@ -64,10 +66,14 @@ namespace trayer
         {
             if (hWnd == IntPtr.Zero)
                 hWnd = GetForegroundWindow();
-            var wProc = aIncludeProc ? GetActiveWindowProcess(hWnd) : null;
-            var wIcon = GetActiveWindowIcon(hWnd);
-            var wText = GetActiveWindowTitle(hWnd);
-            return new object[] { wIcon, wText, wProc };
+            try
+            {
+                var wProc = aIncludeProc ? GetActiveWindowProcess(hWnd) : null;
+                var wIcon = GetActiveWindowIcon(hWnd);
+                var wText = GetActiveWindowTitle(hWnd);
+                return new object[] { wIcon, wText, wProc };
+            } catch { }
+            return null;
         }
         public static void ShowActiveWindow(IntPtr hWnd, bool aShow)
         {
