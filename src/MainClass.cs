@@ -1,4 +1,4 @@
-using Microsoft.VisualBasic.Devices;
+﻿using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace trayer
         public static System.Web.Script.Serialization.JavaScriptSerializer jss = new System.Web.Script.Serialization.JavaScriptSerializer();
         static string[] Keys = new string[] { "hotkey" };
         public static object[] Data = null;
-        public static object[] DefaultData = new object[] {1,0,0};
+        public static object[] DefaultData = new object[] {2,0,0};
         public static bool LoadSettings() {
             if (!File.Exists(FileName))
                 SaveSettings(true);
@@ -63,7 +63,7 @@ namespace trayer
         string appName = "";
         NotifyIcon TrayIcon = new NotifyIcon();
         ContextMenuStrip Menu1 = new ContextMenuStrip();
-        Dictionary<IntPtr, object> Handles = new Dictionary<IntPtr, object>();
+        Dictionary<IntPtr, object[]> Handles = new Dictionary<IntPtr, object[]>();
         IntPtr Handle = IntPtr.Zero;
         void UncheckExcept(int aIndex, ToolStripItemCollection aItems) {
             for (var i = 0; i < aItems.Count; i++)
@@ -79,6 +79,7 @@ namespace trayer
             TrayIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
             TrayIcon.Visible = true;
             TrayIcon.ContextMenuStrip = Menu1;
+            Menu1.Renderer = new ToolStripDarkRenderer();
             // Add context menu
             var optWindow = (ToolStripMenuItem)Menu1.Items.Add("Window");
             var optStartup = (ToolStripMenuItem)Menu1.Items.Add("Startup");
@@ -104,7 +105,7 @@ namespace trayer
             optStartup.Checked = ToggleStartup(true, true);
             optExit.Click += (s, e) => {
                 foreach (var h in Handles.Keys)
-                    Native32.ShowActiveWindow(h, true);
+                    Native32.ShowActiveWindow(Handles[h], true);
                 Application.Exit();
             };
             optStartup.Click += (s, e) => {
@@ -144,10 +145,10 @@ namespace trayer
                     try { optSubWindow.Image = wIcon.ToBitmap(); } catch { }
                 optSubWindow.Click += (s2, e2) => {
                     Handles.Remove(wHandle);
-                    Native32.ShowActiveWindow(wHandle, true);
+                    Native32.ShowActiveWindow(wInfo, true);
                     optWindow.DropDownItems.Remove(optSubWindow);
                 };
-                Native32.ShowActiveWindow(wHandle, false);
+                Native32.ShowActiveWindow(wInfo, false);
             };
             tmr.Enabled = true;
         }

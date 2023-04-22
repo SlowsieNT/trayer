@@ -7,7 +7,7 @@
     <ProjectGuid>{0DEEECA6-8521-4419-A6BB-132D7128DC60}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>trayer</RootNamespace>
-    <AssemblyName>trayer</AssemblyName>
+    <AssemblyName>AppTrayer</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -36,8 +36,10 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -47,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ToolStripDarkRenderer.cs" />
     <Compile Include="native32.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Program.cs" />
